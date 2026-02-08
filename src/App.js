@@ -4,7 +4,7 @@ import { Component } from "react";
 import Layout from "./components/Layout/layout";
 import Burgerbuilder from "./containers/Burgerbuilder/Burgerbuilder";
 import Checkout from "./containers/Checkout/Checkout";
-import { Route, Switch } from "react-router-dom"; // ✅ v5 uses Switch
+import { Route, Switch } from "react-router-dom"; //  v5 uses Switch
 import Orders from "./containers/Orders/Orders";
 import Auth from "./containers/Auth/Auth";
 
