@@ -18,14 +18,6 @@ class Burgerbuilder extends Component {
 
   componentDidMount() {
     this.props.onInitIngredients();
-    // axios
-    //   .get("/ingredients.json")
-    //   .then((response) => {
-    //     this.setState({ ingredients: response.data });
-    //   })
-    //   .catch(() => {
-    //     this.setState({ error: true });
-    //   });
   }
 
   updatePurchaseState(ingredients) {
@@ -33,13 +25,14 @@ class Burgerbuilder extends Component {
     return sum > 0;
   }
 
-  // addIngredientsHandler = (type) => {
-  //   const oldCount = this.state.ingredients[type];
-  //   const updatedCount = oldCount + 1;
-  //   const updatedIngredients = {
-  //     ...this.state.ingredients,
-
-  purchaseHandler = () => this.setState({ purchasing: true });
+  purchaseHandler = () => {
+    if (this.props.isAuthenticated) {
+      this.setState({ purchasing: true });
+    } else {
+      this.props.onSetAuthRedirectPath("/checkout");
+      this.props.history.push("/auth");
+    }
+  };
   purchaseCancelHandler = () => this.setState({ purchasing: false });
 
   purchaseContinueHandler = () => {
@@ -73,6 +66,7 @@ class Burgerbuilder extends Component {
             purchasable={this.updatePurchaseState(this.props.ings)}
             price={this.props.price}
             disabled={disabledInfo}
+            isAuth={this.props.isAuthenticated}
             ordered={this.purchaseHandler}
           />
         </Auxi>
@@ -109,6 +103,7 @@ const mapStateToProps = (state) => {
     ings: state.burgerBuilder.ingredients,
     price: state.burgerBuilder.totalPrice,
     error: state.burgerBuilder.error,
+    isAuthenticated: state.auth.token !== null,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -124,9 +119,12 @@ const mapDispatchToProps = (dispatch) => {
     },
 
     onInitPurchase: () => dispatch(actions.purchaseInit()),
+
+    onSetAuthRedirectPath: (path) =>
+      dispatch(actions.setAuthRedirectPath(path)),
   };
 };
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(WithErrorHandler(withRouter(Burgerbuilder), axios));
