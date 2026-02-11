@@ -3,15 +3,22 @@ import "./App.css";
 import { Component } from "react";
 import Layout from "./components/Layout/layout";
 import Burgerbuilder from "./containers/Burgerbuilder/Burgerbuilder";
-import Checkout from "./containers/Checkout/Checkout";
-import { Route, Switch } from "react-router-dom"; // ✅ v5 uses Switch
-import Orders from "./containers/Orders/Orders";
-import Auth from "./containers/Auth/Auth";
+import { Route, Switch, Redirect } from "react-router-dom"; // ✅ v5 uses Switch
 import Logout from "./containers/Auth/logout/Logout";
 import * as actions from "./Store/Actions/index";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom"; // ✅ Use built-in v5 withRouter
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
+import { withRouter } from "react-router-dom"; // ✅ Use built-in v5 withRoute
+import Asynccomponent from "./hoc/asynccomponent/asynccomponent";
+
+const asyncCheckout = Asynccomponent(() => {
+  return import("./containers/Checkout/Checkout");
+});
+const asyncOrders = Asynccomponent(() => {
+  return import("./containers/Orders/Orders");
+});
+const asyncAuth = Asynccomponent(() => {
+  return import("./containers/Auth/Auth");
+});
 
 class App extends Component {
   componentDidMount() {
@@ -20,7 +27,7 @@ class App extends Component {
   render() {
     let routes = (
       <Switch>
-        <Route path="/auth" component={Auth} />
+        <Route path="/auth" component={asyncAuth} />
         <Route path="/" component={Burgerbuilder} />
         <Redirect to="/" />
       </Switch>
@@ -29,11 +36,12 @@ class App extends Component {
     if (this.props.isAuthenticated) {
       routes = (
         <Switch>
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/Orders" component={Orders} />
+          <Route path="/checkout" component={asyncCheckout} />
+          <Route path="/orders" component={asyncOrders} />
           <Route path="/logout" component={Logout} />
-          <Route path="/auth" component={Auth} />
+          <Route path="/auth" component={asyncAuth} />
           <Route path="/" exact component={Burgerbuilder} />
+          <Redirect to="/" />
         </Switch>
       );
     }
