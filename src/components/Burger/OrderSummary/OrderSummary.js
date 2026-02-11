@@ -3,10 +3,6 @@ import React, { Component } from "react";
 import Auxi from "../../../hoc/Auxi";
 import Button from "../../UI/Button/Button";
 class OrderSummary extends Component {
-  // this hould be a functional component
-  componentDidUpdate() {
-    console.log("[OrderSummary] did update");
-  }
   render() {
     const ingredientSummary = Object.keys(this.props.ingredients).map(
       (ingKey) => {
@@ -16,7 +12,7 @@ class OrderSummary extends Component {
             {this.props.ingredients[ingKey]}
           </li>
         );
-      }
+      },
     );
     return (
       <div>
